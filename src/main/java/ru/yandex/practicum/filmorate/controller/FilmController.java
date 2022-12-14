@@ -4,6 +4,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
+import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 
 import javax.servlet.http.HttpServletRequest;
@@ -52,7 +53,7 @@ public class FilmController {
             films.put(film.getId(), film);
             log.info("Данные фильма '{}' обновлены!", film.getName());
         } else {
-            throw new RuntimeException("Нет пользователя с таким id!");
+            throw new UserNotFoundException("Нет пользователя с таким id!");
         }
         return film;
     }
