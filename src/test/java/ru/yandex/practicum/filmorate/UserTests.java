@@ -67,7 +67,7 @@ class UserTests {
     }
 
     @Test
-    public void AllOkUserValidationTest() {
+    public void allOkUserValidationTest() {
         final User user = new User(1, "Алекс", "яндекс@mail.ru", "алекс", LocalDate.of(1993, 2, 21));
         Set<ConstraintViolation<User>> validates = validator.validate(user);
         Assertions.assertEquals(0, validates.size());

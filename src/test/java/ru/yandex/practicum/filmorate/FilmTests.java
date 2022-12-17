@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate;
 
+import net.bytebuddy.utility.RandomString;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -32,28 +33,8 @@ class FilmTests {
 
     @Test
     public void maxSizeDescriptionFilmValidationTest() {
-        final Film film = new Film(1, "alexFilm", "1" +
-                "1111111111" +
-                "1111111111" +
-                "1111111111" +
-                "1111111111" +
-                "1111111111" +
-                "1111111111" +
-                "1111111111" +
-                "1111111111" +
-                "1111111111" +
-                "1111111111" +
-                "1111111111" +
-                "1111111111" +
-                "1111111111" +
-                "1111111111" +
-                "1111111111" +
-                "1111111111" +
-                "1111111111" +
-                "1111111111" +
-                "1111111111" +
-                "1111111111" +
-                "", LocalDate.of(1994, 2, 23), 120);
+        String stringMaxSize = RandomString.make(201);
+        final Film film = new Film(1, "alexFilm", stringMaxSize, LocalDate.of(1994, 2, 23), 120);
         Set<ConstraintViolation<Film>> validates = validator.validate(film);
         Assertions.assertEquals(1, validates.size());
         validates.stream().map(v -> v.getMessage())
@@ -79,7 +60,7 @@ class FilmTests {
     }
 
     @Test
-    public void AllOkFilmValidationTest() {
+    public void allOkFilmValidationTest() {
         final Film film = new Film(1, "alexFilm", "film", LocalDate.of(1895, 12, 28), 120);
         Set<ConstraintViolation<Film>> validates = validator.validate(film);
         Assertions.assertEquals(0, validates.size());
