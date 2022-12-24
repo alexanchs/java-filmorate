@@ -1,5 +1,4 @@
 package ru.yandex.practicum.filmorate.model;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import ru.yandex.practicum.filmorate.validator.DateValidationInterface;
@@ -9,9 +8,9 @@ import javax.validation.constraints.PastOrPresent;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
+import java.util.Set;
 
 @Data
-@AllArgsConstructor
 public class Film {
 
     @EqualsAndHashCode.Exclude
@@ -29,4 +28,14 @@ public class Film {
 
     @Positive(message = "Продолжительность не должна быть отрицательной!")
     private final int duration;
+
+    private Set<Integer> likes;
+
+    public Film(int id, String name, String description, LocalDate releaseDate, int duration) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.releaseDate = releaseDate;
+        this.duration = duration;
+    }
 }
