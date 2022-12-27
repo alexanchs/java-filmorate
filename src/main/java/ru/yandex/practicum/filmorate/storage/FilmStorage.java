@@ -12,7 +12,12 @@ public interface FilmStorage {
     Film createFilm(Film film);
 
     Film updateFilm(Film film);
+
     void addLike(int idUser, int idFilm);
+
     void deleteLike(int idUser, int idFilm);
-    Set<Film> getPopularFilms();
+
+    Set<Film> getPopularFilms(int limitSize);
+
+    Film getById(int filmId);
 }

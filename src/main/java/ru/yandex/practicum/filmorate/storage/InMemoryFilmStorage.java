@@ -2,6 +2,7 @@ package ru.yandex.practicum.filmorate.storage;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exception.FilmNotFoundException;
+import ru.yandex.practicum.filmorate.exception.IncorrectCountException;
 import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 
@@ -45,7 +46,7 @@ public class InMemoryFilmStorage implements FilmStorage {
     }
 
     @Override
-    public void addLike(int idUser, int idFilm) {
+    public void addLike(int idFilm, int idUser) {
         if (!films.containsKey(idFilm)) {
             throw new FilmNotFoundException(String.format("Фильм с id - %d отсутствует!", idFilm));
         }
@@ -61,6 +62,9 @@ public class InMemoryFilmStorage implements FilmStorage {
         if (!films.containsKey(idFilm)) {
             throw new FilmNotFoundException(String.format("Фильм с id - %d отсутствует!", idFilm));
         }
+        if (idUser <= 0) {
+            throw new UserNotFoundException("Не существует user с отрицательным id!");
+        }
         Film film = films.get(idFilm);
         Set<Integer> tempLikes = film.getLikes();
         tempLikes.remove(idUser);
@@ -69,11 +73,22 @@ public class InMemoryFilmStorage implements FilmStorage {
     }
 
     @Override
-    public Set<Film> getPopularFilms() {
-        TreeSet<Film> popularFilms = new TreeSet<>(Comparator.comparingInt(o -> o.getLikes().size()));
-        popularFilms.addAll(films.values());
-        return popularFilms.stream()
-                .limit(10)
+    public Set<Film> getPopularFilms(int limitSize) {
+        if (limitSize <= 0) {
+            throw new IncorrectCountException("Параметр count имеет отрицательное значение.");
+        }
+
+        return films.values().stream()
+                .sorted(Comparator.comparingInt(o -> o.getLikes().size() * (-1)))
+                .limit(limitSize)
                 .collect(Collectors.toSet());
+    }
+
+    @Override
+    public Film getById(int filmId) {
+        if (!films.containsKey(filmId)) {
+            throw new FilmNotFoundException(String.format("Фильм с id - %d отсутствует!", filmId));
+        }
+        return films.get(filmId);
     }
 }

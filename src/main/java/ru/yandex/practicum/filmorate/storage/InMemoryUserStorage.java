@@ -25,7 +25,7 @@ public class InMemoryUserStorage implements UserStorage {
 
     @Override
     public User createUser(User user) {
-        if (user.getName() == null) {
+        if (user.getName() == null || user.getName().isBlank() || user.getName().isEmpty()) {
             user.setName(user.getLogin());
         }
         user.setId(generateId());
@@ -47,64 +47,96 @@ public class InMemoryUserStorage implements UserStorage {
         }
         return user;
     }
+
     @Override
-    public void addFriend(int yourId, int friendId){
-        if(!users.containsKey(yourId)){
+    public void addFriend(int yourId, int friendId) {
+        if (!users.containsKey(yourId) || !users.containsKey(friendId)) {
             throw new UserNotFoundException(String.format("Нет пользователя с id: %d!", yourId));
+        } else {
+            User user1 = users.get(yourId);
+            User user2 = users.get(friendId);
+            Set<Integer> friends2 = new LinkedHashSet<>();
+            Set<Integer> friends1 = new LinkedHashSet<>();
+
+            if (user1.getFriends() != null) {
+                friends1.addAll(user1.getFriends());
+                friends1.add(friendId);
+            } else {
+                friends1.add(friendId);
+            }
+            if (user2.getFriends() != null) {
+                friends2.addAll(user2.getFriends());
+                friends2.add(yourId);
+            } else {
+                friends2.add(yourId);
+            }
+            user1.setFriends(friends1);
+            user2.setFriends(friends2);
+            updateUser(user1);
+            updateUser(user2);
         }
-        if(!users.containsKey(friendId)){
-            throw new UserNotFoundException(String.format("Нет пользователя с id: %d!", friendId));
-        }
-        User user1 = users.get(yourId);
-        User user2 = users.get(friendId);
-        Set<Long> friends1 = user1.getFriends();
-        Set<Long> friends2 = user2.getFriends();
-        friends1.add((long) friendId);
-        friends2.add((long) yourId);
-        user1.setFriends(friends1);
-        user2.setFriends(friends2);
-        updateUser(user1);
-        updateUser(user2);
+
     }
 
     @Override
-    public Set<Long> getCommonFriends(int yourId, int friendId){
-        if(!users.containsKey(yourId)){
+    public Set<User> getCommonFriends(int yourId, int friendId) {
+        if (!users.containsKey(yourId)) {
             throw new UserNotFoundException(String.format("Нет пользователя с id: %d!", yourId));
         }
-        if(!users.containsKey(friendId)){
+        if (!users.containsKey(friendId)) {
             throw new UserNotFoundException(String.format("Нет пользователя с id: %d!", friendId));
         }
         User user1 = users.get(yourId);
         User user2 = users.get(friendId);
-        Set<Long> friends1 = user1.getFriends();
-        Set<Long> friends2 = user2.getFriends();
-        Set<Long> commonFriends = new HashSet<>();
-        for (Long id:friends1){
-            if(friends2.contains(id)){
-                commonFriends.add(id);
+        Set<Integer> friends1 = user1.getFriends();
+        Set<Integer> friends2 = user2.getFriends();
+
+        Set<User> commonFriends = new HashSet<>();
+        if (friends1 == null || friends2 == null) {
+            return commonFriends;
+        }
+        for (Integer id : friends1) {
+            if (friends2.contains(id)) {
+                commonFriends.add(users.get(id));
             }
         }
         return commonFriends;
     }
 
     @Override
-    public void deleteFriend(int yourId, int friendId){
-        if(!users.containsKey(yourId)){
+    public void deleteFriend(int yourId, int friendId) {
+        if (!users.containsKey(yourId)) {
             throw new UserNotFoundException(String.format("Нет пользователя с id: %d!", yourId));
         }
-        if(!users.containsKey(friendId)){
+        if (!users.containsKey(friendId)) {
             throw new UserNotFoundException(String.format("Нет пользователя с id: %d!", friendId));
         }
         User user1 = users.get(yourId);
         User user2 = users.get(friendId);
-        Set<Long> friends1 = user1.getFriends();
-        Set<Long> friends2 = user2.getFriends();
-        friends1.remove((long) friendId);
-        friends2.remove((long) yourId);
+        Set<Integer> friends1 = user1.getFriends();
+        Set<Integer> friends2 = user2.getFriends();
+        friends1.remove(friendId);
+        friends2.remove(yourId);
         user1.setFriends(friends1);
         user2.setFriends(friends2);
         updateUser(user1);
         updateUser(user2);
+    }
+
+    @Override
+    public User getUser(int id) {
+        if (!users.containsKey(id)) {
+            throw new UserNotFoundException(String.format("Нет пользователя с id: %d!", id));
+        }
+        return users.get(id);
+    }
+
+    @Override
+    public Set<User> getUserFriends(int userId) {
+        Set<User> result = new LinkedHashSet<>();
+        for (int id : users.get(userId).getFriends()) {
+            result.add(getUser(id));
+        }
+        return result;
     }
 }

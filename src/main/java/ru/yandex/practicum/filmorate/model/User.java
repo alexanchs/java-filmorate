@@ -1,6 +1,5 @@
 package ru.yandex.practicum.filmorate.model;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
@@ -12,7 +11,6 @@ import java.util.Set;
 @Data
 public class User {
 
-    @EqualsAndHashCode.Exclude
     private int id;
     private String name;
 
@@ -27,7 +25,7 @@ public class User {
     @PastOrPresent(message = "Дата рождения не должна быть в будущем!")
     private LocalDate birthday;
 
-    private Set<Long> friends;
+    private Set<Integer> friends;
 
     public User(int id, String name, String email, String login, LocalDate birthday) {
         this.id = id;

@@ -32,7 +32,15 @@ public class UserService {
         userStorage.deleteFriend(yourId, friendId);
     }
 
-    public Set<Long> getCommonFriends(int yourId, int friendId) {
+    public Set<User> getCommonFriends(int yourId, int friendId) {
         return userStorage.getCommonFriends(yourId, friendId);
+    }
+
+    public User getUser(int id) {
+        return userStorage.getUser(id);
+    }
+
+    public Set<User> getFriends(int id) {
+        return userStorage.getUserFriends(id);
     }
 }

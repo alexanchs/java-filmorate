@@ -24,15 +24,19 @@ public class FilmService {
         return filmStorage.updateFilm(film);
     }
 
-    public void addLike(int idUser, int idFilm) {
-        filmStorage.addLike(idUser, idFilm);
+    public void addLike(int idFilm, int idUser) {
+        filmStorage.addLike(idFilm, idUser);
     }
 
     public void deleteLike(int idUser, int idFilm) {
         filmStorage.deleteLike(idUser, idFilm);
     }
 
-    public Set<Film> getPopularFilms() {
-        return filmStorage.getPopularFilms();
+    public Set<Film> getPopularFilms(int limitSize) {
+        return filmStorage.getPopularFilms(limitSize);
+    }
+
+    public Film getById(int filmId) {
+        return filmStorage.getById(filmId);
     }
 }
