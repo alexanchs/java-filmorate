@@ -53,27 +53,27 @@ public class InMemoryUserStorage implements UserStorage {
         if (!users.containsKey(yourId) || !users.containsKey(friendId)) {
             throw new UserNotFoundException(String.format("Нет пользователя с id: %d!", yourId));
         } else {
-            User user1 = users.get(yourId);
-            User user2 = users.get(friendId);
-            Set<Integer> friends2 = new LinkedHashSet<>();
-            Set<Integer> friends1 = new LinkedHashSet<>();
+            User userYou = users.get(yourId);
+            User userFriend = users.get(friendId);
+            Set<Integer> friendsYour = new LinkedHashSet<>();
+            Set<Integer> friendsFriend = new LinkedHashSet<>();
 
-            if (user1.getFriends() != null) {
-                friends1.addAll(user1.getFriends());
-                friends1.add(friendId);
+            if (userYou.getFriends() != null) {
+                friendsYour.addAll(userYou.getFriends());
+                friendsYour.add(friendId);
             } else {
-                friends1.add(friendId);
+                friendsYour.add(friendId);
             }
-            if (user2.getFriends() != null) {
-                friends2.addAll(user2.getFriends());
-                friends2.add(yourId);
+            if (userFriend.getFriends() != null) {
+                friendsFriend.addAll(userFriend.getFriends());
+                friendsFriend.add(yourId);
             } else {
-                friends2.add(yourId);
+                friendsFriend.add(yourId);
             }
-            user1.setFriends(friends1);
-            user2.setFriends(friends2);
-            updateUser(user1);
-            updateUser(user2);
+            userYou.setFriends(friendsYour);
+            userFriend.setFriends(friendsFriend);
+            updateUser(userYou);
+            updateUser(userFriend);
         }
 
     }
@@ -86,17 +86,17 @@ public class InMemoryUserStorage implements UserStorage {
         if (!users.containsKey(friendId)) {
             throw new UserNotFoundException(String.format("Нет пользователя с id: %d!", friendId));
         }
-        User user1 = users.get(yourId);
-        User user2 = users.get(friendId);
-        Set<Integer> friends1 = user1.getFriends();
-        Set<Integer> friends2 = user2.getFriends();
+        User userYou = users.get(yourId);
+        User userFriend = users.get(friendId);
+        Set<Integer> friendsYou = userYou.getFriends();
+        Set<Integer> friendsFriend = userFriend.getFriends();
 
         Set<User> commonFriends = new HashSet<>();
-        if (friends1 == null || friends2 == null) {
+        if (friendsYou == null || friendsFriend == null) {
             return commonFriends;
         }
-        for (Integer id : friends1) {
-            if (friends2.contains(id)) {
+        for (Integer id : friendsYou) {
+            if (friendsFriend.contains(id)) {
                 commonFriends.add(users.get(id));
             }
         }
@@ -111,16 +111,16 @@ public class InMemoryUserStorage implements UserStorage {
         if (!users.containsKey(friendId)) {
             throw new UserNotFoundException(String.format("Нет пользователя с id: %d!", friendId));
         }
-        User user1 = users.get(yourId);
-        User user2 = users.get(friendId);
-        Set<Integer> friends1 = user1.getFriends();
-        Set<Integer> friends2 = user2.getFriends();
-        friends1.remove(friendId);
-        friends2.remove(yourId);
-        user1.setFriends(friends1);
-        user2.setFriends(friends2);
-        updateUser(user1);
-        updateUser(user2);
+        User userYou = users.get(yourId);
+        User userFriends = users.get(friendId);
+        Set<Integer> friendsYou = userYou.getFriends();
+        Set<Integer> friendsFriend = userFriends.getFriends();
+        friendsYou.remove(friendId);
+        friendsFriend.remove(yourId);
+        userYou.setFriends(friendsYou);
+        userFriends.setFriends(friendsFriend);
+        updateUser(userYou);
+        updateUser(userFriends);
     }
 
     @Override
