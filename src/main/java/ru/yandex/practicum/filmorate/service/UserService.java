@@ -1,5 +1,8 @@
 package ru.yandex.practicum.filmorate.service;
+
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
@@ -8,9 +11,13 @@ import java.util.Collection;
 import java.util.Set;
 
 @Service
-@RequiredArgsConstructor
 public class UserService {
+
     private final UserStorage userStorage;
+    @Autowired
+   public UserService(@Qualifier("daoImpl") UserStorage userStorage) {
+        this.userStorage = userStorage;
+    }
 
     public Collection<User> findAll() {
         return userStorage.findAll();
@@ -20,8 +27,8 @@ public class UserService {
         return userStorage.createUser(user);
     }
 
-    public User updateUser(User user) {
-        return userStorage.updateUser(user);
+    public void updateUser(User user) {
+        userStorage.updateUser(user);
     }
 
     public void addFriend(int yourId, int friendId) {

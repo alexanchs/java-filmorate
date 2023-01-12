@@ -5,13 +5,12 @@ import java.util.Collection;
 import java.util.Set;
 
 public interface UserStorage {
-    int generateId();
 
     Collection<User> findAll();
 
     User createUser(User user);
 
-    User updateUser(User user);
+    void updateUser(User user);
 
     void addFriend(int yourId, int friendId);
 

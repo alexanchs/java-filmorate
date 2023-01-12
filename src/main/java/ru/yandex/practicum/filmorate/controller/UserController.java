@@ -35,11 +35,11 @@ public class UserController {
     }
 
     @PutMapping
-    public User put(@Valid @RequestBody User user, BindingResult bindingResult) {
+    public void put(@Valid @RequestBody User user, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             throw new ValidationException("Ошибка валидации!");
         }
-        return userService.updateUser(user);
+        userService.updateUser(user);
     }
 
     @GetMapping("/{userId}")
